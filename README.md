@@ -1,15 +1,19 @@
-# screen_protection
+# Screen Protection 🔒  
+A Flutter plugin that prevents screenshots and screen recording on **Android** and **iOS**.
 
-A new Flutter plugin project.
+## ✨ Features
+- 🚫 Block screenshots  
+- 🚫 Block screen recording  
+- 🚫 Protect sensitive content  
+- ⚙️ Works on both Android & iOS  
+- 🧩 Simple API (just one line)
 
-## Getting Started
+---
 
-This project is a starting point for a Flutter
-[plug-in package](https://flutter.dev/to/develop-plugins),
-a specialized package that includes platform-specific implementation code for
-Android and/or iOS.
+## 📦 Installation
 
-For help getting started with Flutter development, view the
-[online documentation](https://docs.flutter.dev), which offers tutorials,
-samples, guidance on mobile development, and a full API reference.
+Add the package to your `pubspec.yaml`:
 
+```yaml
+dependencies:
+  screen_protection: ^0.0.1
