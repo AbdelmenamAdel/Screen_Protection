@@ -3,33 +3,30 @@ import UIKit
 
 public class ScreenProtectionPlugin: NSObject, FlutterPlugin {
 
+  var secureWindow: UIWindow?
+
   public static func register(with registrar: FlutterPluginRegistrar) {
-    let channel = FlutterMethodChannel(name: "screen_protection", binaryMessenger: registrar.messenger())
+    let channel = FlutterMethodChannel(
+      name: "screen_protection",
+      binaryMessenger: registrar.messenger()
+    )
     let instance = ScreenProtectionPlugin()
     registrar.addMethodCallDelegate(instance, channel: channel)
   }
 
-  public func handle(_ call: FlutterMethodCall, result: @escaping FlutterResult) {
-    guard let window = UIApplication.shared.connectedScenes
-            .compactMap({ ($0 as? UIWindowScene)?.keyWindow })
-            .first else {
-        result(FlutterError(code: "NO_WINDOW", message: "No active window found", details: nil))
-        return
-    }
+  public func handle(
+    _ call: FlutterMethodCall,
+    result: @escaping FlutterResult
+  ) {
 
     switch call.method {
 
     case "enable":
-      // منع تصوير الشاشة + تسجيل الشاشة
-      window.isHidden = false
-      window.screen?.isCapturedDidChangeNotification
-      window.layer.superlayer?.addSublayer(CALayer())   // Hardening
-      window.isSecureTextEntry = true
+      enableProtection()
       result(true)
 
     case "disable":
-      // إلغاء المنع
-      window.isSecureTextEntry = false
+      disableProtection()
       result(true)
 
     case "getPlatformVersion":
@@ -38,5 +35,30 @@ public class ScreenProtectionPlugin: NSObject, FlutterPlugin {
     default:
       result(FlutterMethodNotImplemented)
     }
+  }
+
+  private func enableProtection() {
+    guard secureWindow == nil else { return }
+
+    if let windowScene = UIApplication.shared.connectedScenes.first as? UIWindowScene {
+      let window = UIWindow(windowScene: windowScene)
+      window.windowLevel = .alert + 1
+
+      // Add Blur Effect
+      let blurEffect = UIBlurEffect(style: .regular)
+      let blurView = UIVisualEffectView(effect: blurEffect)
+      blurView.frame = window.bounds
+      blurView.autoresizingMask = [.flexibleWidth, .flexibleHeight]
+
+      window.addSubview(blurView)
+      window.isHidden = false
+
+      secureWindow = window
+    }
+  }
+
+  private func disableProtection() {
+    secureWindow?.isHidden = true
+    secureWindow = nil
   }
 }
